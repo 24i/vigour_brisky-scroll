@@ -5,8 +5,10 @@ Scroll property that stores and applies scroll using state
 ```js
 // elem
 {
-  scrollTop: {
-    $: 'funkyScrollField'
+  props: {
+    scrollTop: {
+      $: 'funkyScrollField'
+    }
   }
 }
 ```
@@ -14,12 +16,14 @@ will do internally
 ```js
 // elem
 {
-  scrollTop: {
-    $: 'funkyScrollField',
-    render: {
-      state () {
-        const t = target // find the node
-        t.scrollTop = val * (t.scrollWidth - t.offsetWidth)
+  props: {
+    scrollTop: {
+      $: 'funkyScrollField',
+      render: {
+        state () {
+          const t = target // find the node
+          t.scrollTop = val * (t.scrollWidth - t.offsetWidth)
+        }
       }
     }
   },
