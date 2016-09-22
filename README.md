@@ -22,7 +22,10 @@ will do internally
       render: {
         state () {
           const t = target // find the node
-          t.scrollTop = val * (t.scrollWidth - t.offsetWidth)
+          t.scrollTop = val * (t.scrollWidth - t.offsetWidth) // expects proportion
+        },
+        static () {
+          t.scrollTop = val // expects exact value
         }
       }
     }
