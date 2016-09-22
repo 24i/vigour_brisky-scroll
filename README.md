@@ -1,4 +1,4 @@
-# play-scroll
+# brisky-scroll
 Scroll property that stores and applies scroll using state
 
 ### usage
