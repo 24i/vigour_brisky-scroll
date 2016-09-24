@@ -25,8 +25,8 @@ const buttons = {
     text: '( - )',
     on: {
       click (e, stamp) {
-        const funkyScroll = (state.get('funkyScroll', 0).compute() * 100 - 1) / 100
-        state.set({ funkyScroll }, stamp)
+        const scroll = (state.get('scroll', 0).compute() * 100 - 1) / 100
+        state.set({ scroll }, stamp)
       }
     }
   },
@@ -35,8 +35,8 @@ const buttons = {
     text: '( + )',
     on: {
       click (e, stamp) {
-        const funkyScroll = (state.get('funkyScroll', 0).compute() * 100 + 1) / 100
-        state.set({ funkyScroll }, stamp)
+        const scroll = (state.get('scroll', 0).compute() * 100 + 1) / 100
+        state.set({ scroll }, stamp)
       }
     }
   }
@@ -46,7 +46,7 @@ const app = {
   buttons,
   proportion: {
     text: {
-      $: 'funkyScroll'
+      $: 'scroll'
     }
   },
   scroller: {
@@ -57,7 +57,7 @@ const app = {
     },
     props: {
       scrollTop: {
-        $: 'funkyScroll'
+        $: 'scroll'
       }
     },
     title: {
@@ -90,7 +90,7 @@ const app = {
     },
     props: {
       scrollTop: {
-        $: 'funkyScroll'
+        $: 'scroll'
       }
     },
     title: {
@@ -120,20 +120,24 @@ const app = {
 let last = 0
 const data = {
   title: 'Fun list!',
-  funkyScroll: {
-    // val: 0.5,
-    on: {
-      data (e, stamp) {
-        const keys = state.items.keys()
-        const l = keys.length
-        const index = ~~(l * this.compute())
+  scroll: {
+    $type: 'number',
+    define: {
+      extend: {
+        set (_set, val, stamp, nocontext) {
+          const keys = state.items.keys()
+          const l = keys.length
+          const last = ~~(l * this.compute())
+          const ret = _set.call(this, val, stamp, nocontext)
+          const index = ~~(l * this.compute())
 
-        state.items.set({
-          [keys[last]]: { focus: 0 },
-          [keys[index]]: { focus: 1 }
-        })
+          state.items.set({
+            [keys[last]]: { focus: 0 },
+            [keys[index]]: { focus: 1 }
+          })
 
-        last = index
+          return ret
+        }
       }
     }
   },
@@ -152,6 +156,7 @@ while (++count <= 50) {
 
 state.set(data, false)
 const node = render(app, state)
+
 document.body.appendChild(node)
 
 test(node, state)
