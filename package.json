@@ -38,7 +38,8 @@
     "tap-difflet": "0.4.0",
     "tape": "^4.6.0",
     "vigour-stamp": "^1.4.0",
-    "brisky-hub": "https://github.com/vigour-io/brisky-hub"
+    "brisky-hub": "https://github.com/vigour-io/brisky-hub",
+    "@vigour-io/blend-state-animate": "https://github.com/vigour-io/blend-state-animate"
   },
   "homepage": "https://github.com/vigour-io/horizontal-list",
   "keywords": [

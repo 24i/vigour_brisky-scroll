@@ -1,6 +1,10 @@
 'use strict'
-require('./style.css')
 
+if (typeof window !== 'undefined') {
+  require('./style.css')
+}
+
+const animate = require('@vigour-io/blend-state-animate')
 const render = require('brisky-core/render')
 const Hub = require('brisky-hub')
 const core = require('brisky-core')
@@ -16,7 +20,36 @@ core.prototype.inject(
 
 const state = global.state = new Hub({
   url: 'ws://192.168.1.53:3031',
-  context: 'youzi'
+  context: 'youzi',
+  items: {
+    child: {
+      focus: {
+        sync: false
+      }
+    }
+  },
+  scroll: {
+    $type: 'number',
+    define: {
+      extend: {
+        set (_set, val, stamp, nocontext) {
+          const items = this.parent.items
+          const keys = items.keys()
+          const l = keys.length
+          const last = ~~(l * this.compute())
+          const ret = _set.call(this, val, stamp, nocontext)
+          const index = ~~(l * this.compute())
+
+          items.set({
+            [keys[last]]: { focus: false },
+            [keys[index]]: { focus: true }
+          })
+
+          return ret
+        }
+      }
+    }
+  }
 })
 
 const buttons = {
@@ -25,8 +58,8 @@ const buttons = {
     text: '( - )',
     on: {
       click (e, stamp) {
-        const scroll = (state.get('scroll', 0).compute() * 100 - 1) / 100
-        state.set({ scroll }, stamp)
+        const scroll = (state.get('scroll', 0).compute() * 100 - 10) / 100
+        animate(state.scroll, scroll, 36)
       }
     }
   },
@@ -35,8 +68,8 @@ const buttons = {
     text: '( + )',
     on: {
       click (e, stamp) {
-        const scroll = (state.get('scroll', 0).compute() * 100 + 1) / 100
-        state.set({ scroll }, stamp)
+        const scroll = (state.get('scroll', 0).compute() * 100 + 10) / 100
+        animate(state.scroll, scroll, 36)
       }
     }
   }
@@ -117,46 +150,10 @@ const app = {
   }
 }
 
-let last = 0
-const data = {
-  title: 'Fun list!',
-  scroll: {
-    $type: 'number',
-    define: {
-      extend: {
-        set (_set, val, stamp, nocontext) {
-          const keys = state.items.keys()
-          const l = keys.length
-          const last = ~~(l * this.compute())
-          const ret = _set.call(this, val, stamp, nocontext)
-          const index = ~~(l * this.compute())
-
-          state.items.set({
-            [keys[last]]: { focus: 0 },
-            [keys[index]]: { focus: 1 }
-          })
-
-          return ret
-        }
-      }
-    }
-  },
-  items: []
-}
-
-let count = 0
-while (++count <= 50) {
-  data.items.push({
-    title: `${count}. item`,
-    focus: {
-      sync: false
-    }
-  })
-}
-
-state.set(data, false)
 const node = render(app, state)
 
-document.body.appendChild(node)
+if (document.body) {
+  document.body.appendChild(node)
+}
 
 test(node, state)
