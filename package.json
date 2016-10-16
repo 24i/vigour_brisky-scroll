@@ -14,7 +14,7 @@
   },
   "scripts": {
     "test": "standard",
-    "dev": "budo ./test/index.js:bundle.js -d ./test --css test/bundle.css --pushstate --live",
+    "dev": "TYPE=$npm_config_type && TYPE=${TYPE:-main} && budo ./test/$TYPE/index.js:bundle.js -d ./test/$TYPE -d ./node_modules/@vigour-io/boilerplate-app/device/default --css test/$TYPE/bundle.css --pushstate --live",
     "browserstack": "browserify node_modules/browserstack-tape-reporter test -o test/bundle.js && cd test && browserstack-runner | tap-difflet"
   },
   "dependencies": {
